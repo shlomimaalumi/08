@@ -90,18 +90,39 @@ class CodeWriter:
             self.ind=self.ind+1
             #lt write_to_file(f"@SP\nA=M-1\nD=M\n@x{self.ind}\nM=D\n@SP\nA=M\nD=M\n@y{self.ind}\nM=D\n@SP\nA=M-1\nM=0\n@y{self.ind}\nD=M\n@Y_POSITIVE_OR_ZERO{self.ind}\nD;JGE\n@x{self.ind}\nD=M\n@FINISH_CMP{self.ind}\nD; JGE\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JGE\n@TRUE{self.ind}\n0;JMP\n(Y_POSITIVE_OR_ZERO{self.ind})\n@x{self.ind}\nD=M\n@BOTH_POSITIVE_OR_ZERO{self.ind}\nD;JGE\n@TRUE{self.ind}\n0;JMP\n(BOTH_POSITIVE_OR_ZERO{self.ind})\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JGE\n(TRUE{self.ind})\n@SP\nA=M-1\nM=M-1\n(FINISH_CMP{self.ind})\n",self.os)
             #gt write_to_file(f"@SP\nA=M-1\nD=M\n@x{self.ind}\nM=D\n@SP\nA=M\nD=M\n@y{self.ind}\nM=D\n@SP\nA=M-1\nM=0\n@y{self.ind}\nD=M\n@Y_POSITIVE_OR_ZERO{self.ind}\nD;JGE\n@x{self.ind}\nD=M\n@Y_NEG_AND_X_POS_OR_ZERO{self.ind}\nD; JGE\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JLE\n(Y_NEG_AND_X_POS_OR_ZERO{self.ind})\n@TRUE{self.ind}\n0;JMP\n(Y_POSITIVE_OR_ZERO{self.ind})\n@x{self.ind}\nD=M\n@FINISH_CMP{self.ind}\nD;JLT\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JLE\n(TRUE{self.ind})\n@SP\nA=M-1\nM=M-1\n(FINISH_CMP{self.ind})\n",self.os)
-        elif command == "lt":
-            # write_to_file("@SP\nA=M-1\nD=M\nA=A-1\nD=D-M\nM=-1\n@conlt" + str(
-            #     self.ind) + "\nD;JGT\n@SP\nA=M-1\nA=A-1\nM=0\n(conlt" + str(
-            #     self.ind) + ")\n@SP\nM=M-1", self.os)
-            # self.ind = self.ind + 1
-            write_to_file(f"@SP\nA=M-1\nD=M\n@yp{self.ind}\nD;JGE\n@SP\nA=M-1\nA=A-1\nD=M\n@xpym{self.ind}\nD;JGE\n@xys{self.ind}\n0;JMP\n(yp{self.ind})\n@SP\nA=M-1\nA=A-1\nD=M\n@xys{self.ind}\nD;JGE\n@SP\nM=M-1\nM=M-1\nA=M\nM=0\nM=M-1\n@end{self.ind}\n0;JMP\n(xpym{self.ind})\n@SP\nM=M-1\nM=M-1\nA=M\nM=0\n@end{self.ind}\n0;JMP\n(xys{self.ind})\n@SP\nM=M-1\nA=M\nD=M\n@SP\nM=M-1\nA=M\nD=D-M\nM=0\n@end{self.ind}\nD;JLE\n@SP\nA=M\nM=M-1\n(end{self.ind})\n@SP\nM=M+1\n",self.os)
-        elif command == "gt":
-            # write_to_file("@SP\nA=M-1\nD=M\nA=A-1\nD=D-M\nM=-1\n@congt" + str(
-            #     self.ind) + "\nD;JLT\n@SP\nA=M-1\nA=A-1\nM=0\n(congt" + str(
-            #     self.ind) + ")\n@SP\nM=M-1", self.os)
-            write_to_file(f"@SP\nA=M-1\nD=M\n@yp{self.ind}\nD;JGE\n@SP\nA=M-1\nA=A-1\nD=M\n@xpym{self.ind}\nD;JGE\n@xys{self.ind}\n0;JMP\n(yp{self.ind})\n@SP\nA=M-1\nA=A-1\nD=M\n@xys{self.ind}\nD;JGE\n@SP\nM=M-1\nM=M-1\nA=M\nM=0\n@end{self.ind}\n0;JMP\n(xpym{self.ind})\n@SP\nM=M-1\nM=M-1\nA=M\nM=0\nM=M-1\n@end{self.ind}\n0;JMP\n(xys{self.ind})\n@SP\nM=M-1\nA=M\nD=M\n@SP\nM=M-1\nA=M\nD=D-M\nM=0\n@end{self.ind}\nD;JGE\n@SP\nA=M\nM=M-1\n(end{self.ind})\n@SP\nM=M+1\n",self.os)
-            self.ind = self.ind + 1
+        # elif command == "lt":
+        #     # write_to_file("@SP\nA=M-1\nD=M\nA=A-1\nD=D-M\nM=-1\n@conlt" + str(
+        #     #     self.ind) + "\nD;JGT\n@SP\nA=M-1\nA=A-1\nM=0\n(conlt" + str(
+        #     #     self.ind) + ")\n@SP\nM=M-1", self.os)
+        #     # self.ind = self.ind + 1
+        #     write_to_file(f"@SP\nA=M-1\nD=M\n@yp{self.ind}\nD;JGE\n@SP\nA=M-1\nA=A-1\nD=M\n@xpym{self.ind}\nD;JGE\n@xys{self.ind}\n0;JMP\n(yp{self.ind})\n@SP\nA=M-1\nA=A-1\nD=M\n@xys{self.ind}\nD;JGE\n@SP\nM=M-1\nM=M-1\nA=M\nM=0\nM=M-1\n@end{self.ind}\n0;JMP\n(xpym{self.ind})\n@SP\nM=M-1\nM=M-1\nA=M\nM=0\n@end{self.ind}\n0;JMP\n(xys{self.ind})\n@SP\nM=M-1\nA=M\nD=M\n@SP\nM=M-1\nA=M\nD=D-M\nM=0\n@end{self.ind}\nD;JLE\n@SP\nA=M\nM=M-1\n(end{self.ind})\n@SP\nM=M+1\n",self.os)
+        # elif command == "gt":
+        #     # write_to_file("@SP\nA=M-1\nD=M\nA=A-1\nD=D-M\nM=-1\n@congt" + str(
+        #     #     self.ind) + "\nD;JLT\n@SP\nA=M-1\nA=A-1\nM=0\n(congt" + str(
+        #     #     self.ind) + ")\n@SP\nM=M-1", self.os)
+        #     write_to_file(f"@SP\nA=M-1\nD=M\n@yp{self.ind}\nD;JGE\n@SP\nA=M-1\nA=A-1\nD=M\n@xpym{self.ind}\nD;JGE\n@xys{self.ind}\n0;JMP\n(yp{self.ind})\n@SP\nA=M-1\nA=A-1\nD=M\n@xys{self.ind}\nD;JGE\n@SP\nM=M-1\nM=M-1\nA=M\nM=0\n@end{self.ind}\n0;JMP\n(xpym{self.ind})\n@SP\nM=M-1\nM=M-1\nA=M\nM=0\nM=M-1\n@end{self.ind}\n0;JMP\n(xys{self.ind})\n@SP\nM=M-1\nA=M\nD=M\n@SP\nM=M-1\nA=M\nD=D-M\nM=0\n@end{self.ind}\nD;JGE\n@SP\nA=M\nM=M-1\n(end{self.ind})\n@SP\nM=M+1\n",self.os)
+        # elif command == "gt":
+        #     write_to_file(f"A=M-1\nD=M\n@x{self.ind}\nM=D\n@SP\nA=M\nD=M\n@y{self.ind}\nM=D\n@SP\nA=M-1\nM=0\n@y{self.ind}\nD=M\n@Y_POSITIVE_OR_ZERO{self.ind}\nD;JGE\n@x{self.ind}\nD=M\n@Y_NEG_AND_X_POS_OR_ZERO{self.ind}\nD; JGE\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JLE\n\(Y_NEG_AND_X_POS_OR_ZERO{self.ind})\n@TRUE{self.ind}\n0;JMP\n(Y_POSITIVE_OR_ZERO{self.ind})\n@x{self.ind}\nD=M\n@FINISH_CMP{self.ind}\nD;JLT\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JLE\n(TRUE{self.ind})\n@SP\n\A=M-1\nM=M-1\n(FINISH_CMP{self.ind})\n",self.os)
+        #     self.ind = self.ind + 1
+        # elif command == "lt":
+        #     write_to_file(f"A=M-1\nD=M\n@x{self.ind}\nM=D\n@SP\nA=M\nD=M\n@y{self.ind}\nM=D\n@SP\nA=M-1\nM=0\n@y{self.ind}\nD=M\n@Y_POSITIVE_OR_ZERO{self.ind}\nD;JGE\n@x{self.ind}\nD=M\n@FINISH_CMP{self.ind}\nD; JGE\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JGE\n@TRUE{self.ind}\n0;JMP\n(Y_POSITIVE_OR_ZERO{self.ind})\n@x{self.ind}\nD=M\n@BOTH_POSITIVE_OR_ZERO{self.ind}\nD;JGE\n@TRUE{self.ind}\n0;JMP\n(BOTH_POSITIVE_OR_ZERO{self.ind})\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JGE\n(TRUE{self.ind})\n@SP\nA=M-1\nM=M-1\n(FINISH_CMP{self.ind})\n",self.os)
+        #     self.ind = self.ind + 1
+        elif command == 'gt':
+            self.os.write("@SP\nM=M-1\nA=M-1\nD=M\n@x{i}\nM=D\n@SP\nA=M\nD=M\n@y{i}\nM=D\n"\
+                "@SP\nA=M-1\nM=0\n@y{i}\nD=M\n@Y_POSITIVE_OR_ZERO{i}\nD;JGE\n@x{i}\nD=M\n"\
+                "@Y_NEG_AND_X_POS_OR_ZERO{i}\nD; JGE\n@y{i}\nD=D-M\n@FINISH_CMP{i}\nD;JLE\n"\
+                "(Y_NEG_AND_X_POS_OR_ZERO{i})\n@TRUE{i}\n0;JMP\n(Y_POSITIVE_OR_ZERO{i})\n@x{i}\nD=M\n"\
+                "@FINISH_CMP{i}\nD;JLT\n@y{i}\nD=D-M\n@FINISH_CMP{i}\nD;JLE\n(TRUE{i})\n@SP\n"\
+                "A=M-1\nM=M-1\n(FINISH_CMP{i})\n".format(i=self.ind))
+            self.ind+=1
+        elif command == 'lt':
+            self.os.write("@SP\nM=M-1\nA=M-1\nD=M\n@x{i}\nM=D\n@SP\nA=M\nD=M\n@y{i}\nM=D\n@SP\n"\
+                "A=M-1\nM=0\n@y{i}\nD=M\n@Y_POSITIVE_OR_ZERO{i}\nD;JGE\n@x{i}\nD=M\n@FINISH_CMP{i}\n"\
+                "D; JGE\n@y{i}\nD=D-M\n@FINISH_CMP{i}\nD;JGE\n@TRUE{i}\n0;JMP\n(Y_POSITIVE_OR_ZERO{i})\n"\
+                "@x{i}\nD=M\n@BOTH_POSITIVE_OR_ZERO{i}\nD;JGE\n@TRUE{i}\n0;JMP\n(BOTH_POSITIVE_OR_ZERO{i})\n"\
+                "@y{i}\nD=D-M\n@FINISH_CMP{i}\nD;JGE\n(TRUE{i})\n@SP\nA=M-1\nM=M-1\n(FINISH_CMP{i})\n"
+                .format(i=self.ind))
+            self.ind+=1
         elif command == "and":
             write_to_file("@SP\nA=M-1\nD=M\nA=A-1\nM=D&M\n@SP\nM=M-1",self.os)
         elif command == "or":
@@ -323,4 +344,8 @@ class CodeWriter:
         write_to_file("@ret.address\nA=M\n0;JMP",self.os)
         #write_to_file(f"@{self.lst1.pop()}\n0;JMP",self.os)
         # write_to_file(f"@return.{self.fun_name}${self.return_label_ind}\nA=M\n0;JMP", self.os)
+
+
+
+
 

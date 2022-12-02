@@ -27,9 +27,9 @@ def translate_file(
     parser = Parser(input_file)
     code_writer = CodeWriter(output_file)
     code_writer.set_file_name(input_file.name)
-    if bootstrap:
-        output_file.write("@256\nD=A\n@SP\nM=D\n")
-        code_writer.write_call("Sys.init", 2)
+    # if bootstrap:
+    #     output_file.write("@256\nD=A\n@SP\nM=D\n")
+    #     code_writer.write_call("Sys.init", 2)
 
     while parser.has_more_commands():
 
