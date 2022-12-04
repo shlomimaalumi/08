@@ -31,6 +31,7 @@ class CodeWriter:
         self.os = output_stream
         self.name = output_stream.name.split("\\")[-1].split(".")[0]
         self.ind=0
+        self.ind2 = 0
         self.fun_ind=random.randint(0,999999999)
         self.return_label_ind=0
         self.lcl_ind=0
@@ -86,7 +87,8 @@ class CodeWriter:
             write_to_file("@SP\nA=M-1\nD=M\nM=0\nM=M-D",self.os)
         elif command == "eq":
             # write_to_file("@SP\nA=M-1\nD=M\nA=A-1\nD=D-M\nA=A-1\nD;JEQ\n@SP\nM=M-1",self.os)
-            write_to_file("@SP\nA=M-1\nD=M\nA=A-1\nD=D-M\nM=-1\n@coneq"+str(self.ind)+"\nD;JEQ\n@SP\nA=M-1\nA=A-1\nM=0\n(coneq"+str(self.ind)+")\n@SP\nM=M-1",self.os)
+            write_to_file(f"@SP\nA=M-1\nD=M\nA=A-1\nD=D-M\nM=-1\n@coneq{self.ind2}"+str(self.ind)+f"\nD;JEQ\n@SP\nA=M-1\nA=A-1\nM=0\n(coneq{self.ind2}"+str(self.ind)+")\n@SP\nM=M-1",self.os)
+            self.ind2=self.ind2+1
             self.ind=self.ind+1
             #lt write_to_file(f"@SP\nA=M-1\nD=M\n@x{self.ind}\nM=D\n@SP\nA=M\nD=M\n@y{self.ind}\nM=D\n@SP\nA=M-1\nM=0\n@y{self.ind}\nD=M\n@Y_POSITIVE_OR_ZERO{self.ind}\nD;JGE\n@x{self.ind}\nD=M\n@FINISH_CMP{self.ind}\nD; JGE\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JGE\n@TRUE{self.ind}\n0;JMP\n(Y_POSITIVE_OR_ZERO{self.ind})\n@x{self.ind}\nD=M\n@BOTH_POSITIVE_OR_ZERO{self.ind}\nD;JGE\n@TRUE{self.ind}\n0;JMP\n(BOTH_POSITIVE_OR_ZERO{self.ind})\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JGE\n(TRUE{self.ind})\n@SP\nA=M-1\nM=M-1\n(FINISH_CMP{self.ind})\n",self.os)
             #gt write_to_file(f"@SP\nA=M-1\nD=M\n@x{self.ind}\nM=D\n@SP\nA=M\nD=M\n@y{self.ind}\nM=D\n@SP\nA=M-1\nM=0\n@y{self.ind}\nD=M\n@Y_POSITIVE_OR_ZERO{self.ind}\nD;JGE\n@x{self.ind}\nD=M\n@Y_NEG_AND_X_POS_OR_ZERO{self.ind}\nD; JGE\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JLE\n(Y_NEG_AND_X_POS_OR_ZERO{self.ind})\n@TRUE{self.ind}\n0;JMP\n(Y_POSITIVE_OR_ZERO{self.ind})\n@x{self.ind}\nD=M\n@FINISH_CMP{self.ind}\nD;JLT\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JLE\n(TRUE{self.ind})\n@SP\nA=M-1\nM=M-1\n(FINISH_CMP{self.ind})\n",self.os)
@@ -108,21 +110,23 @@ class CodeWriter:
         #     write_to_file(f"A=M-1\nD=M\n@x{self.ind}\nM=D\n@SP\nA=M\nD=M\n@y{self.ind}\nM=D\n@SP\nA=M-1\nM=0\n@y{self.ind}\nD=M\n@Y_POSITIVE_OR_ZERO{self.ind}\nD;JGE\n@x{self.ind}\nD=M\n@FINISH_CMP{self.ind}\nD; JGE\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JGE\n@TRUE{self.ind}\n0;JMP\n(Y_POSITIVE_OR_ZERO{self.ind})\n@x{self.ind}\nD=M\n@BOTH_POSITIVE_OR_ZERO{self.ind}\nD;JGE\n@TRUE{self.ind}\n0;JMP\n(BOTH_POSITIVE_OR_ZERO{self.ind})\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JGE\n(TRUE{self.ind})\n@SP\nA=M-1\nM=M-1\n(FINISH_CMP{self.ind})\n",self.os)
         #     self.ind = self.ind + 1
         elif command == 'gt':
-            self.os.write("@SP\nM=M-1\nA=M-1\nD=M\n@x{i}\nM=D\n@SP\nA=M\nD=M\n@y{i}\nM=D\n"\
-                "@SP\nA=M-1\nM=0\n@y{i}\nD=M\n@Y_POSITIVE_OR_ZERO{i}\nD;JGE\n@x{i}\nD=M\n"\
-                "@Y_NEG_AND_X_POS_OR_ZERO{i}\nD; JGE\n@y{i}\nD=D-M\n@FINISH_CMP{i}\nD;JLE\n"\
-                "(Y_NEG_AND_X_POS_OR_ZERO{i})\n@TRUE{i}\n0;JMP\n(Y_POSITIVE_OR_ZERO{i})\n@x{i}\nD=M\n"\
-                "@FINISH_CMP{i}\nD;JLT\n@y{i}\nD=D-M\n@FINISH_CMP{i}\nD;JLE\n(TRUE{i})\n@SP\n"\
-                "A=M-1\nM=M-1\n(FINISH_CMP{i})\n".format(i=self.ind))
+            self.os.write("@SP\nM=M-1\nA=M-1\nD=M\n@x{i}.{j}\nM=D\n@SP\nA=M\nD=M\n@y{i}.{j}\nM=D\n"\
+                "@SP\nA=M-1\nM=0\n@y{i}.{j}\nD=M\n@Y_POSITIVE_OR_ZERO{i}.{j}\nD;JGE\n@x{i}.{j}\nD=M\n"\
+                "@Y_NEG_AND_X_POS_OR_ZERO{i}.{j}\nD; JGE\n@y{i}.{j}\nD=D-M\n@FINISH_CMP{i}.{j}\nD;JLE\n"\
+                "(Y_NEG_AND_X_POS_OR_ZERO{i}.{j})\n@TRUE{i}.{j}\n0;JMP\n(Y_POSITIVE_OR_ZERO{i}.{j})\n@x{i}.{j}\nD=M\n"\
+                "@FINISH_CMP{i}.{j}\nD;JLT\n@y{i}.{j}\nD=D-M\n@FINISH_CMP{i}.{j}\nD;JLE\n(TRUE{i}.{j})\n@SP\n"\
+                "A=M-1\nM=M-1\n(FINISH_CMP{i}.{j})\n".format(i=self.ind,j=self.ind2))
             self.ind+=1
+            self.ind2 += 1
         elif command == 'lt':
-            self.os.write("@SP\nM=M-1\nA=M-1\nD=M\n@x{i}\nM=D\n@SP\nA=M\nD=M\n@y{i}\nM=D\n@SP\n"\
-                "A=M-1\nM=0\n@y{i}\nD=M\n@Y_POSITIVE_OR_ZERO{i}\nD;JGE\n@x{i}\nD=M\n@FINISH_CMP{i}\n"\
-                "D; JGE\n@y{i}\nD=D-M\n@FINISH_CMP{i}\nD;JGE\n@TRUE{i}\n0;JMP\n(Y_POSITIVE_OR_ZERO{i})\n"\
-                "@x{i}\nD=M\n@BOTH_POSITIVE_OR_ZERO{i}\nD;JGE\n@TRUE{i}\n0;JMP\n(BOTH_POSITIVE_OR_ZERO{i})\n"\
-                "@y{i}\nD=D-M\n@FINISH_CMP{i}\nD;JGE\n(TRUE{i})\n@SP\nA=M-1\nM=M-1\n(FINISH_CMP{i})\n"
-                .format(i=self.ind))
+            self.os.write("@SP\nM=M-1\nA=M-1\nD=M\n@x{i}.{j}\nM=D\n@SP\nA=M\nD=M\n@y{i}.{j}\nM=D\n@SP\n"\
+                "A=M-1\nM=0\n@y{i}.{j}\nD=M\n@Y_POSITIVE_OR_ZERO{i}.{j}\nD;JGE\n@x{i}.{j}\nD=M\n@FINISH_CMP{i}.{j}\n"\
+                "D; JGE\n@y{i}.{j}\nD=D-M\n@FINISH_CMP{i}.{j}\nD;JGE\n@TRUE{i}.{j}\n0;JMP\n(Y_POSITIVE_OR_ZERO{i}.{j})\n"\
+                "@x{i}.{j}\nD=M\n@BOTH_POSITIVE_OR_ZERO{i}.{j}\nD;JGE\n@TRUE{i}.{j}\n0;JMP\n(BOTH_POSITIVE_OR_ZERO{i}.{j})\n"\
+                "@y{i}.{j}\nD=D-M\n@FINISH_CMP{i}.{j}\nD;JGE\n(TRUE{i}.{j})\n@SP\nA=M-1\nM=M-1\n(FINISH_CMP{i}.{j})\n"
+                .format(i=self.ind,j=self.ind2))
             self.ind+=1
+            self.ind2 += 1
         elif command == "and":
             write_to_file("@SP\nA=M-1\nD=M\nA=A-1\nM=D&M\n@SP\nM=M-1",self.os)
         elif command == "or":
@@ -344,7 +348,6 @@ class CodeWriter:
         write_to_file("@ret.address\nA=M\n0;JMP",self.os)
         #write_to_file(f"@{self.lst1.pop()}\n0;JMP",self.os)
         # write_to_file(f"@return.{self.fun_name}${self.return_label_ind}\nA=M\n0;JMP", self.os)
-
 
 
 

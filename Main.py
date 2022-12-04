@@ -32,7 +32,6 @@ def translate_file(
         code_writer.write_call("Sys.init", 2)
 
     while parser.has_more_commands():
-
         if parser.command_type() in ["C_POP", "C_PUSH"]:
             code_writer.write_push_pop(parser.command_type(), parser.arg1(),
                                        parser.arg2())
