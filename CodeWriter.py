@@ -8,7 +8,8 @@ Unported [License](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 import random
 
 import typing
-
+return_label_ind=0
+fun_ind=0
 segments_dic = {"local": 1, "argument": 2, "this": 3, "that": 4}
 
 
@@ -31,9 +32,6 @@ class CodeWriter:
         self.os = output_stream
         self.name = output_stream.name.split("\\")[-1].split(".")[0]
         self.ind=0
-        self.ind2 = 0
-        self.fun_ind=random.randint(0,999999999)
-        self.return_label_ind=0
         self.lcl_ind=0
         self.fun_name=""
         self.static_list=[]
@@ -87,8 +85,7 @@ class CodeWriter:
             write_to_file("@SP\nA=M-1\nD=M\nM=0\nM=M-D",self.os)
         elif command == "eq":
             # write_to_file("@SP\nA=M-1\nD=M\nA=A-1\nD=D-M\nA=A-1\nD;JEQ\n@SP\nM=M-1",self.os)
-            write_to_file(f"@SP\nA=M-1\nD=M\nA=A-1\nD=D-M\nM=-1\n@coneq{self.ind2}"+str(self.ind)+f"\nD;JEQ\n@SP\nA=M-1\nA=A-1\nM=0\n(coneq{self.ind2}"+str(self.ind)+")\n@SP\nM=M-1",self.os)
-            self.ind2=self.ind2+1
+            write_to_file("@SP\nA=M-1\nD=M\nA=A-1\nD=D-M\nM=-1\n@coneq"+str(self.ind)+"\nD;JEQ\n@SP\nA=M-1\nA=A-1\nM=0\n(coneq"+str(self.ind)+")\n@SP\nM=M-1",self.os)
             self.ind=self.ind+1
             #lt write_to_file(f"@SP\nA=M-1\nD=M\n@x{self.ind}\nM=D\n@SP\nA=M\nD=M\n@y{self.ind}\nM=D\n@SP\nA=M-1\nM=0\n@y{self.ind}\nD=M\n@Y_POSITIVE_OR_ZERO{self.ind}\nD;JGE\n@x{self.ind}\nD=M\n@FINISH_CMP{self.ind}\nD; JGE\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JGE\n@TRUE{self.ind}\n0;JMP\n(Y_POSITIVE_OR_ZERO{self.ind})\n@x{self.ind}\nD=M\n@BOTH_POSITIVE_OR_ZERO{self.ind}\nD;JGE\n@TRUE{self.ind}\n0;JMP\n(BOTH_POSITIVE_OR_ZERO{self.ind})\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JGE\n(TRUE{self.ind})\n@SP\nA=M-1\nM=M-1\n(FINISH_CMP{self.ind})\n",self.os)
             #gt write_to_file(f"@SP\nA=M-1\nD=M\n@x{self.ind}\nM=D\n@SP\nA=M\nD=M\n@y{self.ind}\nM=D\n@SP\nA=M-1\nM=0\n@y{self.ind}\nD=M\n@Y_POSITIVE_OR_ZERO{self.ind}\nD;JGE\n@x{self.ind}\nD=M\n@Y_NEG_AND_X_POS_OR_ZERO{self.ind}\nD; JGE\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JLE\n(Y_NEG_AND_X_POS_OR_ZERO{self.ind})\n@TRUE{self.ind}\n0;JMP\n(Y_POSITIVE_OR_ZERO{self.ind})\n@x{self.ind}\nD=M\n@FINISH_CMP{self.ind}\nD;JLT\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JLE\n(TRUE{self.ind})\n@SP\nA=M-1\nM=M-1\n(FINISH_CMP{self.ind})\n",self.os)
@@ -110,23 +107,21 @@ class CodeWriter:
         #     write_to_file(f"A=M-1\nD=M\n@x{self.ind}\nM=D\n@SP\nA=M\nD=M\n@y{self.ind}\nM=D\n@SP\nA=M-1\nM=0\n@y{self.ind}\nD=M\n@Y_POSITIVE_OR_ZERO{self.ind}\nD;JGE\n@x{self.ind}\nD=M\n@FINISH_CMP{self.ind}\nD; JGE\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JGE\n@TRUE{self.ind}\n0;JMP\n(Y_POSITIVE_OR_ZERO{self.ind})\n@x{self.ind}\nD=M\n@BOTH_POSITIVE_OR_ZERO{self.ind}\nD;JGE\n@TRUE{self.ind}\n0;JMP\n(BOTH_POSITIVE_OR_ZERO{self.ind})\n@y{self.ind}\nD=D-M\n@FINISH_CMP{self.ind}\nD;JGE\n(TRUE{self.ind})\n@SP\nA=M-1\nM=M-1\n(FINISH_CMP{self.ind})\n",self.os)
         #     self.ind = self.ind + 1
         elif command == 'gt':
-            self.os.write("@SP\nM=M-1\nA=M-1\nD=M\n@x{i}.{j}\nM=D\n@SP\nA=M\nD=M\n@y{i}.{j}\nM=D\n"\
-                "@SP\nA=M-1\nM=0\n@y{i}.{j}\nD=M\n@Y_POSITIVE_OR_ZERO{i}.{j}\nD;JGE\n@x{i}.{j}\nD=M\n"\
-                "@Y_NEG_AND_X_POS_OR_ZERO{i}.{j}\nD; JGE\n@y{i}.{j}\nD=D-M\n@FINISH_CMP{i}.{j}\nD;JLE\n"\
-                "(Y_NEG_AND_X_POS_OR_ZERO{i}.{j})\n@TRUE{i}.{j}\n0;JMP\n(Y_POSITIVE_OR_ZERO{i}.{j})\n@x{i}.{j}\nD=M\n"\
-                "@FINISH_CMP{i}.{j}\nD;JLT\n@y{i}.{j}\nD=D-M\n@FINISH_CMP{i}.{j}\nD;JLE\n(TRUE{i}.{j})\n@SP\n"\
-                "A=M-1\nM=M-1\n(FINISH_CMP{i}.{j})\n".format(i=self.ind,j=self.ind2))
+            self.os.write("@SP\nM=M-1\nA=M-1\nD=M\n@x{i}\nM=D\n@SP\nA=M\nD=M\n@y{i}\nM=D\n"\
+                "@SP\nA=M-1\nM=0\n@y{i}\nD=M\n@Y_POSITIVE_OR_ZERO{i}\nD;JGE\n@x{i}\nD=M\n"\
+                "@Y_NEG_AND_X_POS_OR_ZERO{i}\nD; JGE\n@y{i}\nD=D-M\n@FINISH_CMP{i}\nD;JLE\n"\
+                "(Y_NEG_AND_X_POS_OR_ZERO{i})\n@TRUE{i}\n0;JMP\n(Y_POSITIVE_OR_ZERO{i})\n@x{i}\nD=M\n"\
+                "@FINISH_CMP{i}\nD;JLT\n@y{i}\nD=D-M\n@FINISH_CMP{i}\nD;JLE\n(TRUE{i})\n@SP\n"\
+                "A=M-1\nM=M-1\n(FINISH_CMP{i})\n".format(i=self.ind))
             self.ind+=1
-            self.ind2 += 1
         elif command == 'lt':
-            self.os.write("@SP\nM=M-1\nA=M-1\nD=M\n@x{i}.{j}\nM=D\n@SP\nA=M\nD=M\n@y{i}.{j}\nM=D\n@SP\n"\
-                "A=M-1\nM=0\n@y{i}.{j}\nD=M\n@Y_POSITIVE_OR_ZERO{i}.{j}\nD;JGE\n@x{i}.{j}\nD=M\n@FINISH_CMP{i}.{j}\n"\
-                "D; JGE\n@y{i}.{j}\nD=D-M\n@FINISH_CMP{i}.{j}\nD;JGE\n@TRUE{i}.{j}\n0;JMP\n(Y_POSITIVE_OR_ZERO{i}.{j})\n"\
-                "@x{i}.{j}\nD=M\n@BOTH_POSITIVE_OR_ZERO{i}.{j}\nD;JGE\n@TRUE{i}.{j}\n0;JMP\n(BOTH_POSITIVE_OR_ZERO{i}.{j})\n"\
-                "@y{i}.{j}\nD=D-M\n@FINISH_CMP{i}.{j}\nD;JGE\n(TRUE{i}.{j})\n@SP\nA=M-1\nM=M-1\n(FINISH_CMP{i}.{j})\n"
-                .format(i=self.ind,j=self.ind2))
+            self.os.write("@SP\nM=M-1\nA=M-1\nD=M\n@x{i}\nM=D\n@SP\nA=M\nD=M\n@y{i}\nM=D\n@SP\n"\
+                "A=M-1\nM=0\n@y{i}\nD=M\n@Y_POSITIVE_OR_ZERO{i}\nD;JGE\n@x{i}\nD=M\n@FINISH_CMP{i}\n"\
+                "D; JGE\n@y{i}\nD=D-M\n@FINISH_CMP{i}\nD;JGE\n@TRUE{i}\n0;JMP\n(Y_POSITIVE_OR_ZERO{i})\n"\
+                "@x{i}\nD=M\n@BOTH_POSITIVE_OR_ZERO{i}\nD;JGE\n@TRUE{i}\n0;JMP\n(BOTH_POSITIVE_OR_ZERO{i})\n"\
+                "@y{i}\nD=D-M\n@FINISH_CMP{i}\nD;JGE\n(TRUE{i})\n@SP\nA=M-1\nM=M-1\n(FINISH_CMP{i})\n"
+                .format(i=self.ind))
             self.ind+=1
-            self.ind2 += 1
         elif command == "and":
             write_to_file("@SP\nA=M-1\nD=M\nA=A-1\nM=D&M\n@SP\nM=M-1",self.os)
         elif command == "or":
@@ -209,7 +204,11 @@ class CodeWriter:
         # you will implement this in project 8!
         x=f"({self.name}.{self.fun_name}{label})"
         write_to_file(f"//******write label {label}******", self.os)
-        write_to_file(f"({self.name}.{self.fun_name}{label})",self.os)
+        if '$' in label:
+            write_to_file(f"({label})",self.os)
+        else:
+            write_to_file(f"({label})", self.os)
+
 
     def write_goto(self, label: str) -> None:
         """Writes assembly code that affects the goto command.
@@ -221,8 +220,13 @@ class CodeWriter:
         # you will implement this in project 8!
         write_to_file(f"//******write goto {label}******", self.os)
 #        (BasicLoop.$label1)
+        x=f"{self.name}.{self.fun_name}{label})"
+        nam=f"{self.name}"
+        fu_name=f"{self.fun_name}"
+        lab=f"{label}"
+
         s=f"@{self.name}.{self.fun_name}${label}\n0;JMP"
-        write_to_file(f"@{self.name}.{self.fun_name}{label}\n0;JMP", self.os)
+        write_to_file(f"@{label}\n0;JMP", self.os)
 
     def write_if(self, label: str) -> None:
         """Writes assembly code that affects the if-goto command.
@@ -233,7 +237,7 @@ class CodeWriter:
         # This is irrelevant for project 7,
         # you will implement this in project 8!
         write_to_file(f"//******write if {label}******", self.os)
-        write_to_file(f"@SP\nA=M\nA=A-1\nD=M\n@SP\nM=M-1\n@{self.name}.{self.fun_name}{label}\nD;JNE",self.os)  # get the value to pop
+        write_to_file(f"@SP\nA=M\nA=A-1\nD=M\n@SP\nM=M-1\n@{label}\nD;JNE",self.os)  # get the value to pop
 
     def write_function(self, function_name: str, n_vars: int) -> None:
         """Writes assembly code that affects the function command.
@@ -251,24 +255,24 @@ class CodeWriter:
         # (function_name)       // injects a function entry label into the code
         # repeat n_vars times:  // n_vars = number of local variables
         #   push constant 0     // initializes the local variables to 0
+        global fun_ind
+        fun_ind=fun_ind+1
 
         write_to_file(f"//******write function {function_name} with {n_vars} locals ******",self.os)
         self.fun_name=function_name
         write_to_file(f"//set {n_vars} n_vars  for{function_name}",self.os)
-        self.fun_ind=self.fun_ind+1
         self.lcl_ind+=1
         counter_for_comment=0
         write_to_file(f"({function_name})",self.os)
-        num=self.fun_ind
         write_to_file(f"//iteration number: {counter_for_comment}", self.os)
         counter_for_comment += 1
         write_to_file(
             f"@{n_vars}\nD=A\n@vars\nM=D",self.os)  # set loop for vars
-        write_to_file(f"@ind.for.loop\nM=0\n(loop.{function_name}{self.fun_ind})",self.os) #set loop for vars
-        write_to_file(f"@ind.for.loop\nD=M\n@vars\nD=D-M\n@end.locals{num}\nD;JEQ",self.os) #if statement in loop
-        write_to_file(f"@SP\nA=M\nM=0\n@ind.for.loop\nM=M+1\n@SP\nM=M+1\n@loop.{function_name}{self.fun_ind}\n0;JMP", self.os)
+        write_to_file(f"@ind.for.loop\nM=0\n(loop.{function_name}{fun_ind})",self.os) #set loop for vars
+        write_to_file(f"@ind.for.loop\nD=M\n@vars\nD=D-M\n@end.locals{fun_ind}\nD;JEQ",self.os) #if statement in loop
+        write_to_file(f"@SP\nA=M\nM=0\n@ind.for.loop\nM=M+1\n@SP\nM=M+1\n@loop.{function_name}{fun_ind}\n0;JMP", self.os)
         write_to_file(f"//*************finish to make n_vars:************",self.os)
-        write_to_file(f"(end.locals{num})",self.os)
+        write_to_file(f"(end.locals{fun_ind})",self.os)
 
         pass
 
@@ -300,10 +304,11 @@ class CodeWriter:
         # LCL = SP              // repositions LCL
         # goto function_name    // transfers control to the callee
         # (return_address)      // injects the return address label into the code
-        self.return_label_ind=random.randint(0,99999)
+        global return_label_ind
+        return_label_ind=return_label_ind+1
         write_to_file(f"//************************write call*****************",self.os)
         write_to_file(f"//save last values before call to function",self.os)
-        write_to_file(f"@return.{function_name}${self.return_label_ind}\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1",self.os)
+        write_to_file(f"@return.{function_name}${return_label_ind}\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1",self.os)
         write_to_file(f"@LCL\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1", self.os)
         write_to_file(f"@ARG\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1", self.os)
         write_to_file(f"@THIS\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1", self.os)
@@ -316,8 +321,8 @@ class CodeWriter:
         write_to_file(f"//*************START FUN! we will jump to:************",self.os)
         write_to_file(f"@{function_name}\n0;JMP",self.os)
 
-        write_to_file(f"(return.{function_name}${self.return_label_ind})",self.os)
-        # self.lst1.append(f"return.{function_name}${self.return_label_ind}")
+        write_to_file(f"(return.{function_name}${return_label_ind})",self.os)
+        # self.lst1.append(f"return.{function_name}${return_label_ind}")
 
 
     def write_return(self) -> None:
@@ -347,7 +352,7 @@ class CodeWriter:
             f"//*************END FUN! we will BACK to:************", self.os)
         write_to_file("@ret.address\nA=M\n0;JMP",self.os)
         #write_to_file(f"@{self.lst1.pop()}\n0;JMP",self.os)
-        # write_to_file(f"@return.{self.fun_name}${self.return_label_ind}\nA=M\n0;JMP", self.os)
+        # write_to_file(f"@return.{self.fun_name}${return_label_ind}\nA=M\n0;JMP", self.os)
 
 
 
